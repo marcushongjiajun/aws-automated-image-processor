@@ -2,36 +2,60 @@ import boto3
 import os
 from PIL import Image
 import logging
+from botocore.exceptions import ClientError
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def process_image(input_path, output_path):
+# Initialize the S3 client
+s3_client = boto3.client('s3')
+
+def process_image_from_s3(bucket_name, object_key, output_bucket):
     """
-    Opens an image and converts it to grayscale.
-    This simulates 'processing' the data.
+    Downloads an image from S3, makes it grayscale, and uploads it back.
     """
+    local_input = f"/tmp/{object_key}"
+    local_output = f"/tmp/processed-{object_key}"
+    
     try:
-        with Image.open(input_path) as img:
-            logger.info(f"Processing image: {input_path}")
+        # Step A: Download from S3
+        logger.info(f"Downloading {object_key} from {bucket_name}...")
+        s3_client.download_file(bucket_name, object_key, local_input)
+        
+        # Step B: Process locally (using working logic)
+        with Image.open(local_input) as img:
             grayscale = img.convert("L")
-            grayscale.save(output_path)
-            logger.info(f"Successfully saved to: {output_path}")
+            grayscale.save(local_output)
+        
+        # Step C: Upload back to the 'processed' bucket
+        logger.info(f"Uploading to {output_bucket}...")
+        s3_client.upload_file(local_output, output_bucket, f"processed-{object_key}")
+        
+        logger.info("Task completed successfully!")
+    
+    except ClientError as e:
+        # Log specific AWS errors (e.g., Access Denied or 404)
+        logger.error(f"AWS Error: {e.response['Error']['Code']} - {e.response['Error']['Message']}")
+    
     except Exception as e:
-        logger.error(f"Error processing image: {e}")
+        logger.error(f"Unexpected error: {e}")
+    finally:
+        # Cleanup
+        for f in [local_input, local_output]:
+            if os.path.exists(f):
+                os.remove(f)
 
 if __name__ == "__main__":
-    # Local Test:
-    # 1. Place a file named 'test.jpg' in your folder.
-    # 2. Run: python src/app.py
-    # 3. It will create 'prrocessed_test.jpg'
+    SOURCE_BUCKET = 'mhjj-upload-test' 
+    DEST_BUCKET = 'mhjj-processed-test'
+    FILE_TO_TEST = 'test.jpg'
+    """
+    # For testing, we use environmental variables (Best Practice)
+    SOURCE_BUCKET = os.environ.get('UPLOAD_BUCKET', 'your-unique-upload-bucket')
+    DEST_BUCKET = os.environ.get('PROCESSED_BUCKET', 'your-unique-processed-bucket')
+    FILE_TO_TEST = 'test.jpg' 
+    """
+ 
 
-    in_file = "test.jpg"
-    out_file = "processed_test.jpg"
-
-
-    if os.path.exists(in_file):
-        process_image(in_file, out_file)
-    else:
-        logger.warning(f"File {in_file} not found. Place an image in the root folder to test!")
+    process_image_from_s3(SOURCE_BUCKET, FILE_TO_TEST, DEST_BUCKET)
