@@ -1,0 +1,47 @@
+name: "Terraform CI"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  terraform:
+    name: "Terraform Quality Check"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+    # 1. Check out the code to the runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # 2. Install Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    
+    # 3. Check formatting (will fail if code is messy)
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+    
+    # 4. Initialize (Downloads providers)
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    # 5. Validate (Checks for syntax errors)
+    - name: Terraform Validate
+      id: Validate
+      run: terraform validate -no-color
+    
+    # 6. Plan (Generates a preview of changes)
+    - name: Terraform Plan
+      id: plan
+      if: github.event_name == 'pull_request'
+      run: terraform plan -no-color
+      continue-on-error: true
