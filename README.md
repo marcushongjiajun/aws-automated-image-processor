@@ -33,3 +33,5 @@ docker build -t image-processor .
 ```bash
 docker run -e UPLOAD_BUCKET="your-bucket" -e PROCESSED_BUCKET="your-processed-bucket" image-processor
 ```
+
+![Architecture Diagram](image.png)
