@@ -1,5 +1,4 @@
-# AWS Automated Image Processor 
-![Terraform CI](https://github.com/marcushongjiajun/aws-automated-image-processor/actions/workflows/terraform-ci.yml/badge.svg)
+# AWS Automated Image Processor ![Terraform CI](https://github.com/marcushongjiajun/aws-automated-image-processor/actions/workflows/terraform-ci.yml/badge.svg)
 A cloud-native, containerized Python application that automates image transformation using AWS S3 and Docker. This project demonstrates Infrastructure as Code (IaC) principles, least-privilege security, and cost-optimized cloud storage.
 
 ## 🏗️ Architecture
