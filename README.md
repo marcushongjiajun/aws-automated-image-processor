@@ -4,10 +4,10 @@ A cloud-native, containerized Python application that automates image transforma
 ## 🏗️ Architecture
 * Infrastructure: Provisioned via Terraform (HCP Cloud).
 * Storage: AWS S3 (Raw & Processed buckets) with 24-hour automated lifecycle cleanup.
-* Security: IAM Roles with standalone managed policies (No long-term IAM User keys used).
+* Security: IAM Roles with stand-alone managed policies (No long-term IAM User keys used).
 * Compute: Containerized Python (Pillow/Boto3) running as a non-privileged user.
 
-## 🛡️ Security Features (SOC Focus)
+## 🛡️ Security Features
 * Least Privilege: Custom IAM policy allows only GetObject and PutObject on specific project buckets—zero access to the rest of the AWS account.
 * Container Hardening: Dockerfile implements a non-root appuser to prevent privilege escalation attacks.
 * Cost Management: Automated S3 Lifecycle rules ensure a near-zero cost footprint by purging test data daily.
