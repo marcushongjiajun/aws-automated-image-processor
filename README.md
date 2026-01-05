@@ -20,15 +20,16 @@ A cloud-native, containerized Python application that automates image transforma
 
 ## 🛠️ How to Run
 ### 1. Infrastructure:
-'''bash
+```bash
 cd terraform
 terraform init
 terraform apply
-
+```
 ### 2. Docker Build:
-'''bash
+```bash
 docker build -t image-processor .
-
+```
 ### 3: Run Container
-'''bash
+```bash
 docker run -e UPLOAD_BUCKET="your-bucket" -e PROCESSED_BUCKET="your-processed-bucket" image-processor
+```
