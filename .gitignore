@@ -42,3 +42,4 @@ Thumbs.db
 *.png
 *.jpeg
 processed_*.jpg
+!images/architecture_diagram.jpg
