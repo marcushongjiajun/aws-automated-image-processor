@@ -2,7 +2,7 @@
 A cloud-native, containerized Python application that automates image transformation using AWS S3 and Docker. This project demonstrates Infrastructure as Code (IaC) principles, least-privilege security, and cost-optimized cloud storage.
 
 ## 🏗️ Architecture
-![Project Architecture Diagram]
+![Project Architecture Diagram](images/architecture_diagram.jpg)
 * Infrastructure: Provisioned via Terraform (HCP Cloud).
 * Storage: AWS S3 (Raw & Processed buckets) with 24-hour automated lifecycle cleanup.
 * Security: IAM Roles with stand-alone managed policies (No long-term IAM User keys used).
